@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ic_night_mode: Moon/night mode icon -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M12.01,12c0,-3.57 2.2,-6.62 5.31,-7.87 0.89,-0.36 0.75,-1.69 -0.19,-1.9 -1.1,-0.24 -2.27,-0.3 -3.48,-0.14 -4.51,0.6 -8.12,4.31 -8.59,8.83C4.44,16.93 9.13,22 15,22c1.76,0 3.41,-0.48 4.83,-1.31 0.76,-0.44 0.63,-1.58 -0.21,-1.81C16.11,17.88 12.01,15.32 12.01,12z" />
+</vector>

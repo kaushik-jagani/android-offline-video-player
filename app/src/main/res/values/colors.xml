@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary palette (Dark theme) -->
+    <color name="colorPrimary">#BB86FC</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorSecondary">#03DAC6</color>
+    <color name="colorAccent">#CF6679</color>
+
+    <!-- Surfaces -->
+    <color name="colorBackground">#121212</color>
+    <color name="colorSurface">#1E1E1E</color>
+    <color name="colorSurfaceVariant">#2C2C2C</color>
+
+    <!-- Text -->
+    <color name="colorOnPrimary">#000000</color>
+    <color name="colorOnBackground">#E0E0E0</color>
+    <color name="colorOnSurface">#E0E0E0</color>
+    <color name="colorOnSurfaceVariant">#BDBDBD</color>
+
+    <!-- Player -->
+    <color name="playerControlsBackground">#99000000</color>
+    <color name="seekBarThumb">#4FC3F7</color>
+    <color name="seekBarProgress">#4FC3F7</color>
+    <color name="seekBarTrack">#66FFFFFF</color>
+    <color name="toolbarButtonBg">#66000000</color>
+    <color name="nightModeOverlay">#44FF8F00</color>
+    <color name="activeFeature">#4FC3F7</color>
+
+    <!-- Common -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+</resources>

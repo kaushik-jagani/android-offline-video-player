@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/grid_1"
+    app:cardBackgroundColor="@color/colorSurface"
+    app:cardCornerRadius="@dimen/folder_card_radius"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Folder thumbnail (from first video) -->
+        <ImageView
+            android:id="@+id/ivThumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/folder_thumbnail_height"
+            android:contentDescription="@string/folder_thumbnail"
+            android:scaleType="centerCrop"
+            tools:background="@color/colorSurfaceVariant" />
+
+        <!-- Folder name -->
+        <TextView
+            android:id="@+id/tvFolderName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingHorizontal="@dimen/grid_2"
+            android:paddingTop="@dimen/grid_1"
+            android:textColor="@color/colorOnSurface"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold"
+            tools:text="Movies" />
+
+        <!-- Video count -->
+        <TextView
+            android:id="@+id/tvVideoCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/grid_2"
+            android:paddingBottom="@dimen/grid_1"
+            android:textColor="@color/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_caption"
+            tools:text="12 videos" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

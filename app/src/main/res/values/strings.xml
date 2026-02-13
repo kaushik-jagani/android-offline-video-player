@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Video Player</string>
+
+    <!-- Main / Folder screen -->
+    <string name="no_videos_found">No video folders found.\nPull down to scan.</string>
+    <string name="video_count_format">%d videos</string>
+    <string name="scan_failed">Failed to scan videos. Please try again.</string>
+
+    <!-- Video list -->
+    <string name="no_videos_in_folder">No videos in this folder.</string>
+
+    <!-- Player -->
+    <string name="playback_speed">Speed</string>
+    <string name="lock_screen">Lock screen</string>
+    <string name="unlock_screen">Unlock screen</string>
+    <string name="subtitle">Subtitle</string>
+    <string name="back">Navigate back</string>
+    <string name="play_pause">Play or pause video</string>
+    <string name="rewind">Rewind 10 seconds</string>
+    <string name="forward">Forward 10 seconds</string>
+    <string name="folder_thumbnail">Folder thumbnail</string>
+    <string name="video_thumbnail">Video thumbnail</string>
+    <string name="speed_label_1x">1X</string>
+    <string name="previous_video">Previous video</string>
+    <string name="next_video">Next video</string>
+    <string name="more_options">More options</string>
+    <string name="hw_label">HW</string>
+    <string name="sw_label">SW</string>
+    <string name="ab_repeat">A-B Repeat</string>
+    <string name="equalizer">Equalizer</string>
+    <string name="screenshot">Screenshot</string>
+    <string name="screen_rotation">Screen Rotation</string>
+    <string name="night_mode">Night Mode</string>
+    <string name="loop">Loop</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Unmute</string>
+    <string name="sleep_timer">Sleep Timer</string>
+    <string name="aspect_ratio">Aspect Ratio</string>
+    <string name="fit_screen">Fit Screen</string>
+    <string name="fill_screen">Fill Screen</string>
+    <string name="sleep_timer_set">Sleep timer: %d min</string>
+    <string name="sleep_timer_off">Sleep timer off</string>
+    <string name="sleep_off">Off</string>
+    <string name="sleep_5">5 min</string>
+    <string name="sleep_10">10 min</string>
+    <string name="sleep_15">15 min</string>
+    <string name="sleep_30">30 min</string>
+    <string name="sleep_60">60 min</string>
+    <string name="screenshot_saved">Screenshot saved</string>
+    <string name="screenshot_failed">Screenshot failed</string>
+    <string name="no_previous_video">No previous video</string>
+    <string name="no_next_video">No next video</string>
+    <string name="loop_on">Loop on</string>
+    <string name="loop_off">Loop off</string>
+    <string name="night_mode_on">Night mode on</string>
+    <string name="night_mode_off">Night mode off</string>
+    <string name="ab_point_a_set">Point A set</string>
+    <string name="ab_point_b_set">Point B set — looping</string>
+    <string name="ab_repeat_cleared">A-B repeat cleared</string>
+    <string name="resize_fit">Fit</string>
+    <string name="resize_fill">Fill</string>
+    <string name="resize_zoom">Zoom</string>
+
+    <!-- Permission -->
+    <string name="permission_required">Storage permission is required to scan videos.</string>
+    <string name="permission_denied">Permission denied. Grant access in Settings to scan videos.</string>
+
+    <!-- Play Store / About -->
+    <string name="app_description">A lightweight offline video player. No internet required.</string>
+</resources>

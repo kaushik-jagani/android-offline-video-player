@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing / dimensions on an 8dp grid -->
+    <dimen name="grid_1">8dp</dimen>
+    <dimen name="grid_2">16dp</dimen>
+    <dimen name="grid_3">24dp</dimen>
+    <dimen name="grid_4">32dp</dimen>
+
+    <!-- Folder grid -->
+    <dimen name="folder_thumbnail_height">160dp</dimen>
+    <dimen name="folder_card_radius">12dp</dimen>
+
+    <!-- Video list -->
+    <dimen name="video_thumbnail_width">140dp</dimen>
+    <dimen name="video_thumbnail_height">90dp</dimen>
+
+    <!-- Player -->
+    <dimen name="player_icon_size">42dp</dimen>
+    <dimen name="player_seek_icon_size">36dp</dimen>
+    <dimen name="player_control_padding">12dp</dimen>
+
+    <!-- Text -->
+    <dimen name="text_title">16sp</dimen>
+    <dimen name="text_subtitle">13sp</dimen>
+    <dimen name="text_caption">11sp</dimen>
+</resources>

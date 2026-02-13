@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ── Base Dark Theme ─────────────────────────────────────────────── -->
+    <style name="Theme.OfflineVideoPlayer" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+        <item name="android:statusBarColor">@color/colorBackground</item>
+        <item name="android:navigationBarColor">@color/colorBackground</item>
+    </style>
+
+    <!-- ── Player Fullscreen Theme ─────────────────────────────────────── -->
+    <style name="Theme.OfflineVideoPlayer.Player">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- ── Dialog Theme (speed picker, etc.) ───────────────────────────── -->
+    <style name="Theme.OfflineVideoPlayer.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/colorSurfaceVariant</item>
+        <item name="android:colorBackground">@color/colorSurfaceVariant</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+    </style>
+
+    <!-- ── Bottom Sheet Theme ──────────────────────────────────────────── -->
+    <style name="Theme.OfflineVideoPlayer.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.OfflineVideoPlayer.BottomSheet</item>
+    </style>
+
+    <style name="Widget.OfflineVideoPlayer.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
+    <!-- ── Player Toolbar Icon Button ──────────────────────────────────── -->
+    <style name="PlayerToolbarButton">
+        <item name="android:layout_width">42dp</item>
+        <item name="android:layout_height">42dp</item>
+        <item name="android:layout_marginHorizontal">4dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@drawable/bg_toolbar_button</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <!-- ── Player Toolbar Text Button (Speed label etc.) ───────────────── -->
+    <style name="PlayerToolbarTextButton">
+        <item name="android:layout_width">42dp</item>
+        <item name="android:layout_height">42dp</item>
+        <item name="android:layout_marginHorizontal">4dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@drawable/bg_toolbar_button</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ── Expanded Toolbar Item Container ──────────────────────────────── -->
+    <style name="ExpandedToolbarItem">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingVertical">4dp</item>
+    </style>
+
+    <!-- ── Expanded Toolbar Icon ────────────────────────────────────────── -->
+    <style name="ExpandedToolbarIcon">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:background">@drawable/bg_toolbar_button</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <!-- ── Expanded Toolbar Label ───────────────────────────────────────── -->
+    <style name="ExpandedToolbarLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <!-- ── Bottom Sheet Option Item ────────────────────────────────────── -->
+    <style name="BottomSheetOption">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingHorizontal">24dp</item>
+        <item name="android:paddingVertical">14dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textColor">@color/colorOnSurface</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+</resources>
