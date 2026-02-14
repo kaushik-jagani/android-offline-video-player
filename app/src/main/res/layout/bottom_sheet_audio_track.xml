@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:paddingTop="12dp"
+    android:paddingBottom="20dp">
+
+    <!-- Drag handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_drag_handle" />
+
+    <!-- Title row with icon -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="16dp">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_language"
+            app:tint="@color/seekBarProgress" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@string/audio_track"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Audio track list (dynamically populated RadioButtons) -->
+    <RadioGroup
+        android:id="@+id/rgAudioTracks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="6dp"
+        android:background="#15FFFFFF" />
+
+    <!-- SW Audio Decoder row -->
+    <LinearLayout
+        android:id="@+id/rowSwDecoder"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp">
+
+        <CheckBox
+            android:id="@+id/cbSwAudioDecoder"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:button="@drawable/custom_checkbox"
+            android:clickable="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:text="@string/use_sw_audio_decoder"
+            android:textColor="@color/colorOnSurface"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="#15FFFFFF" />
+
+    <!-- Open row -->
+    <TextView
+        android:id="@+id/rowOpen"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
+        android:text="@string/open_audio_file"
+        android:textColor="@color/colorOnSurface"
+        android:textSize="15sp" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="#15FFFFFF" />
+
+    <!-- Stereo mode row -->
+    <LinearLayout
+        android:id="@+id/rowStereoMode"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/stereo_mode"
+            android:textColor="@color/colorOnSurface"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvStereoMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stereo_auto"
+            android:textColor="@color/seekBarProgress"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="#15FFFFFF" />
+
+    <!-- Synchronization row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/synchronization"
+            android:textColor="@color/colorOnSurface"
+            android:textSize="15sp" />
+
+        <ImageButton
+            android:id="@+id/btnSyncMinus"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/sync_decrease"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_remove_circle"
+            app:tint="#AAFFFFFF" />
+
+        <TextView
+            android:id="@+id/tvSyncValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="68dp"
+            android:text="0.00s"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnSyncPlus"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/sync_increase"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_add_circle"
+            app:tint="#AAFFFFFF" />
+
+    </LinearLayout>
+
+    <!-- AV Sync row -->
+    <LinearLayout
+        android:id="@+id/rowAvSync"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/av_sync"
+            android:textColor="@color/colorOnSurface"
+            android:textSize="15sp" />
+
+        <CheckBox
+            android:id="@+id/cbAvSync"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:button="@drawable/custom_checkbox"
+            android:checked="true"
+            android:clickable="false" />
+
+    </LinearLayout>
+
+</LinearLayout>

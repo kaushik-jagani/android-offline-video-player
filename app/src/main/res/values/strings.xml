@@ -66,6 +66,21 @@
     <string name="resize_crop">Crop</string>
     <string name="resize_100">100%</string>
 
+    <!-- Audio Track -->
+    <string name="audio_track">Audio Track</string>
+    <string name="disable_audio">Disable</string>
+    <string name="use_sw_audio_decoder">Use SW audio decoder</string>
+    <string name="stereo_mode">Stereo mode</string>
+    <string name="stereo_auto">Auto</string>
+    <string name="stereo_mono">Mono</string>
+    <string name="stereo_stereo">Stereo</string>
+    <string name="synchronization">Synchronization</string>
+    <string name="sync_decrease">Decrease sync</string>
+    <string name="sync_increase">Increase sync</string>
+    <string name="av_sync">AV sync</string>
+    <string name="no_audio_tracks">No audio tracks found</string>
+    <string name="open_audio_file">Open</string>
+
     <!-- Permission -->
     <string name="permission_required">Storage permission is required to scan videos.</string>
     <string name="permission_denied">Permission denied. Grant access in Settings to scan videos.</string>

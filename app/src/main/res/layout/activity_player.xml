@@ -148,6 +148,14 @@
                             android:src="@drawable/ic_equalizer"
                             app:tint="@color/white" />
 
+                        <!-- Audio Track -->
+                        <ImageButton
+                            android:id="@+id/btnAudioTrack"
+                            style="@style/PlayerToolbarButton"
+                            android:contentDescription="@string/audio_track"
+                            android:src="@drawable/ic_language"
+                            app:tint="@color/white" />
+
                         <!-- Speed -->
                         <TextView
                             android:id="@+id/btnSpeed"

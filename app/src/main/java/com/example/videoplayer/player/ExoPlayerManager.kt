@@ -7,6 +7,7 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
@@ -159,7 +160,93 @@ class ExoPlayerManager(context: Context) {
         player.seekTo(position)
         player.playWhenReady = true
     }
+    // ── Audio Track Selection ────────────────────────────────────────
 
+    /** Lightweight info about an audio track. */
+    data class AudioTrackInfo(
+        val groupIndex: Int,
+        val trackIndex: Int,
+        val label: String,
+        val language: String?,
+        val isSelected: Boolean
+    )
+
+    /**
+     * Returns all available audio tracks with their selection state.
+     * Thread-safe: only accesses player on the calling (main) thread.
+     */
+    fun getAudioTracks(): List<AudioTrackInfo> {
+        val tracks = mutableListOf<AudioTrackInfo>()
+        val currentTracks = player.currentTracks
+        for (group in currentTracks.groups) {
+            if (group.type != C.TRACK_TYPE_AUDIO) continue
+            for (i in 0 until group.length) {
+                val format = group.getTrackFormat(i)
+                val lang = format.language
+                val label = buildString {
+                    format.label?.let { append(it) }
+                    if (lang != null) {
+                        if (isNotEmpty()) append(" - ")
+                        append(java.util.Locale(lang).displayLanguage)
+                    }
+                    if (isEmpty()) append("Track ${tracks.size + 1}")
+                    // Append channel info
+                    if (format.channelCount > 0) {
+                        append(" (${format.channelCount}ch)")
+                    }
+                }
+                tracks.add(
+                    AudioTrackInfo(
+                        groupIndex = currentTracks.groups.indexOf(group),
+                        trackIndex = i,
+                        label = label,
+                        language = lang,
+                        isSelected = group.isTrackSelected(i)
+                    )
+                )
+            }
+        }
+        return tracks
+    }
+
+    /**
+     * Select a specific audio track by group and track index.
+     * Pass groupIndex = -1 to disable all audio tracks.
+     */
+    fun selectAudioTrack(groupIndex: Int, trackIndex: Int) {
+        if (groupIndex < 0) {
+            // Disable audio
+            player.trackSelectionParameters = player.trackSelectionParameters
+                .buildUpon()
+                .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, true)
+                .build()
+            return
+        }
+        val groups = player.currentTracks.groups
+        val targetGroup = groups.getOrNull(groupIndex) ?: return
+        if (targetGroup.type != C.TRACK_TYPE_AUDIO) return
+
+        player.trackSelectionParameters = player.trackSelectionParameters
+            .buildUpon()
+            .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, false)
+            .setOverrideForType(
+                TrackSelectionOverride(targetGroup.mediaTrackGroup, listOf(trackIndex))
+            )
+            .build()
+    }
+
+    /** Whether audio track type is currently disabled. */
+    val isAudioDisabled: Boolean
+        get() = player.trackSelectionParameters
+            .disabledTrackTypes.contains(C.TRACK_TYPE_AUDIO)
+
+    /** Re-enable audio (undo disable). */
+    fun enableAudio() {
+        player.trackSelectionParameters = player.trackSelectionParameters
+            .buildUpon()
+            .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, false)
+            .build()
+    }
     // ── State Helpers ────────────────────────────────────────────────────
 
     /** Current playback position in milliseconds. */

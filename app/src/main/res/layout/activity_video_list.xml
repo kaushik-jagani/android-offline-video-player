@@ -29,7 +29,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:padding="@dimen/grid_1"
+            android:paddingStart="@dimen/grid_1"
+            android:paddingTop="@dimen/grid_1"
+            android:paddingEnd="@dimen/grid_1"
+            android:paddingBottom="56dp"
             tools:listitem="@layout/item_video" />
 
         <!-- Empty state -->
@@ -51,12 +54,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorSurface"
+        android:background="@android:color/transparent"
         android:gravity="center"
-        android:paddingVertical="8dp"
+        android:paddingVertical="6dp"
         android:text="@string/developer_credit"
-        android:textColor="#66FFFFFF"
-        android:textSize="11sp"
+        android:textColor="#44FFFFFF"
+        android:textSize="10sp"
         android:letterSpacing="0.04" />
 
 </LinearLayout>
