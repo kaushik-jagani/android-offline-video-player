@@ -1,6 +1,7 @@
 package com.example.videoplayer.player
 
 import android.content.Context
+import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -8,6 +9,8 @@ import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.SeekParameters
+import java.io.File
 
 /**
  * Encapsulates [ExoPlayer] setup, lifecycle, and convenience helpers.
@@ -27,7 +30,12 @@ class ExoPlayerManager(context: Context) {
      * [startPositionMs] (for resume).
      */
     fun prepare(path: String, startPositionMs: Long = 0L) {
-        val mediaItem = MediaItem.fromUri(path)
+        val uri = if (path.startsWith("/") || path.startsWith("file")) {
+            Uri.fromFile(File(path))
+        } else {
+            Uri.parse(path)
+        }
+        val mediaItem = MediaItem.fromUri(uri)
         player.setMediaItem(mediaItem)
         player.prepare()
         if (startPositionMs > 0L) {
@@ -44,7 +52,14 @@ class ExoPlayerManager(context: Context) {
         startIndex: Int = 0,
         startPositionMs: Long = 0L
     ) {
-        val items = paths.map { MediaItem.fromUri(it) }
+        val items = paths.map { path ->
+            val uri = if (path.startsWith("/") || path.startsWith("file")) {
+                Uri.fromFile(File(path))
+            } else {
+                Uri.parse(path)
+            }
+            MediaItem.fromUri(uri)
+        }
         player.setMediaItems(items, startIndex, startPositionMs)
         player.prepare()
         player.playWhenReady = true
@@ -77,6 +92,13 @@ class ExoPlayerManager(context: Context) {
     /** Absolute seek. */
     fun seekTo(positionMs: Long) {
         player.seekTo(positionMs)
+    }
+
+    /** Use keyframe-only seeking (fast, for scrub gestures). */
+    fun setFastSeekMode(fast: Boolean) {
+        player.setSeekParameters(
+            if (fast) SeekParameters.CLOSEST_SYNC else SeekParameters.DEFAULT
+        )
     }
 
     // ── Speed ────────────────────────────────────────────────────────────

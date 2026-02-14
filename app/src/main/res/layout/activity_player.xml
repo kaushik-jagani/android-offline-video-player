@@ -211,48 +211,6 @@
 
         </LinearLayout>
 
-        <!-- ══════════════════ CENTER PLAY CONTROLS ═════════════════════ -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <!-- Previous video -->
-            <ImageButton
-                android:id="@+id/btnPrevious"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginEnd="24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/previous_video"
-                android:src="@drawable/ic_skip_previous"
-                app:tint="@color/white" />
-
-            <!-- Play / Pause -->
-            <ImageButton
-                android:id="@+id/btnPlayPause"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/play_pause"
-                android:src="@drawable/ic_play"
-                app:tint="@color/white" />
-
-            <!-- Next video -->
-            <ImageButton
-                android:id="@+id/btnNext"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginStart="24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/next_video"
-                android:src="@drawable/ic_skip_next"
-                app:tint="@color/white" />
-
-        </LinearLayout>
-
         <!-- ══════════════════ BOTTOM SECTION ═══════════════════════════ -->
         <LinearLayout
             android:id="@+id/bottomBar"
@@ -303,7 +261,7 @@
 
             </LinearLayout>
 
-            <!-- Bottom button row: Lock ... Aspect | Fit -->
+            <!-- Bottom button row: Lock | prev play next | Aspect Fit -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -329,29 +287,59 @@
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
+                <!-- Previous video -->
+                <ImageButton
+                    android:id="@+id/btnPrevious"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/previous_video"
+                    android:src="@drawable/ic_skip_previous"
+                    app:tint="@color/white" />
+
+                <!-- Play / Pause -->
+                <ImageButton
+                    android:id="@+id/btnPlayPause"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:padding="4dp"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/play_pause"
+                    android:src="@drawable/ic_play"
+                    app:tint="@color/white" />
+
+                <!-- Next video -->
+                <ImageButton
+                    android:id="@+id/btnNext"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/next_video"
+                    android:src="@drawable/ic_skip_next"
+                    app:tint="@color/white" />
+
+                <!-- Spacer -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
                 <!-- Aspect ratio toggle -->
                 <ImageButton
                     android:id="@+id/btnAspectRatio"
                     android:layout_width="44dp"
                     android:layout_height="44dp"
-                    android:layout_marginEnd="4dp"
                     android:padding="8dp"
                     android:scaleType="fitCenter"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/aspect_ratio"
-                    android:src="@drawable/ic_aspect_ratio"
-                    app:tint="@color/white" />
-
-                <!-- Fit / Fill toggle -->
-                <ImageButton
-                    android:id="@+id/btnFitScreen"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:padding="8dp"
-                    android:scaleType="fitCenter"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/fit_screen"
-                    android:src="@drawable/ic_fit_screen"
+                    android:src="@drawable/ic_aspect_fit"
                     app:tint="@color/white" />
 
             </LinearLayout>
@@ -456,7 +444,7 @@
             tools:text="73%" />
     </LinearLayout>
 
-    <!-- ─── Seek Preview Overlay (center, shown during horizontal scrub) ─ -->
+    <!-- ─── Seek Preview Overlay (center, minimal time info during scrub) ─ -->
     <LinearLayout
         android:id="@+id/seekPreview"
         android:layout_width="wrap_content"
@@ -465,27 +453,17 @@
         android:background="@drawable/bg_info_pill"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingHorizontal="12dp"
+        android:paddingHorizontal="20dp"
         android:paddingVertical="12dp"
         android:visibility="gone"
         tools:visibility="visible">
-
-        <!-- Frame thumbnail preview -->
-        <ImageView
-            android:id="@+id/ivSeekThumbnail"
-            android:layout_width="160dp"
-            android:layout_height="90dp"
-            android:background="#22FFFFFF"
-            android:importantForAccessibility="no"
-            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/tvSeekTarget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             tools:text="1:23:45" />
 
@@ -495,7 +473,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textColor="@color/seekBarProgress"
-            android:textSize="13sp"
+            android:textSize="14sp"
             tools:text="+00:30" />
     </LinearLayout>
 

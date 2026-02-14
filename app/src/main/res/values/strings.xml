@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Video Player</string>
+    <string name="app_name">My Video Player</string>
+
+    <!-- Developer credit -->
+    <string name="developer_credit">Developed by Kaushik Jagani</string>
 
     <!-- Main / Folder screen -->
     <string name="no_videos_found">No video folders found.\nPull down to scan.</string>
@@ -58,9 +61,10 @@
     <string name="ab_point_a_set">Point A set</string>
     <string name="ab_point_b_set">Point B set — looping</string>
     <string name="ab_repeat_cleared">A-B repeat cleared</string>
-    <string name="resize_fit">Fit</string>
-    <string name="resize_fill">Fill</string>
-    <string name="resize_zoom">Zoom</string>
+    <string name="resize_fit">Fit to Screen</string>
+    <string name="resize_stretch">Stretch</string>
+    <string name="resize_crop">Crop</string>
+    <string name="resize_100">100%</string>
 
     <!-- Permission -->
     <string name="permission_required">Storage permission is required to scan videos.</string>

@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorSurface"
-        app:title="Video Player"
+        app:title="My Video Player"
         app:titleTextColor="@color/white" />
 
     <!-- Swipe-to-refresh wrapping the folder grid -->
@@ -35,6 +35,7 @@
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:padding="@dimen/grid_1"
+                android:paddingBottom="36dp"
                 tools:listitem="@layout/item_folder" />
 
             <!-- Empty state -->
@@ -53,5 +54,18 @@
         </FrameLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Developer footer -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/colorSurface"
+        android:gravity="center"
+        android:paddingVertical="8dp"
+        android:text="@string/developer_credit"
+        android:textColor="#66FFFFFF"
+        android:textSize="11sp"
+        android:letterSpacing="0.04" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

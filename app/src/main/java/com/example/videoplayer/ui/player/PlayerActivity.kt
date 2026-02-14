@@ -3,9 +3,7 @@ package com.example.videoplayer.ui.player
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.media.MediaMetadataRetriever
 import android.media.MediaScannerConnection
-import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
@@ -75,11 +73,12 @@ class PlayerActivity : AppCompatActivity() {
     private var abPointA: Long = -1L
     private var abPointB: Long = -1L
 
-    // ── Resize modes cycle ───────────────────────────────────────────────
+    // ── Resize modes cycle: Fit → Stretch → Crop → 100% ───────────────────
     private val resizeModes = intArrayOf(
         AspectRatioFrameLayout.RESIZE_MODE_FIT,
         AspectRatioFrameLayout.RESIZE_MODE_FILL,
-        AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+        AspectRatioFrameLayout.RESIZE_MODE_ZOOM,
+        AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
     )
     private var currentResizeIndex = 0
 
@@ -89,12 +88,10 @@ class PlayerActivity : AppCompatActivity() {
     // ── Seek preview state ───────────────────────────────────────────────
     private var isSeeking = false
     private var seekStartPosition = 0L
+    private var wasPlayingBeforeSeek = false
     private var isUserDraggingSeekbar = false
 
-    // ── Thumbnail extractor for seek preview ────────────────────────────
-    private var metadataRetriever: MediaMetadataRetriever? = null
-    private var lastThumbnailTimeMs = -1L
-    private val thumbnailIntervalMs = 2_000L  // reuse same frame for 2-second windows
+
 
     // ── Indicator track height (130dp → px) for brightness/volume bars ──
     private val indicatorTrackHeightPx: Int by lazy {
@@ -134,7 +131,6 @@ class PlayerActivity : AppCompatActivity() {
         setupControls()
         setupToolbar()
         setupGestures()
-        initThumbnailRetriever()
     }
 
     override fun onPause() {
@@ -153,7 +149,6 @@ class PlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
         sleepTimer?.cancel()
-        releaseThumbnailRetriever()
         if (::playerManager.isInitialized) {
             playerManager.release()
         }
@@ -200,7 +195,10 @@ class PlayerActivity : AppCompatActivity() {
                         if (!isUserDraggingSeekbar && !isSeeking) updateProgress()
                     }
                     Player.STATE_BUFFERING -> {
-                        binding.progressBar.visibility = View.VISIBLE
+                        // Don't show spinner during seek/drag — frame will appear shortly
+                        if (!isSeeking && !isUserDraggingSeekbar) {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
                     }
                     Player.STATE_ENDED -> {
                         // Video fully watched – reset position to 0 so next open starts fresh
@@ -212,6 +210,15 @@ class PlayerActivity : AppCompatActivity() {
 
             override fun onVideoSizeChanged(videoSize: VideoSize) {
                 autoRotateForVideo(videoSize.width, videoSize.height)
+            }
+
+            override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(
+                    this@PlayerActivity,
+                    "Cannot play this video: ${error.localizedMessage ?: "Unknown error"}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         })
 
@@ -232,20 +239,33 @@ class PlayerActivity : AppCompatActivity() {
                 if (fromUser) {
                     binding.tvPosition.text = TimeFormatter.format(progress.toLong())
                     updateRemainingTime(progress.toLong())
+                    showSeekbarPreview(progress.toLong())
                 }
             }
 
             override fun onStartTrackingTouch(sb: SeekBar?) {
                 isUserDraggingSeekbar = true
+                // Pause during seekbar drag so only the static frame is shown
+                wasPlayingBeforeSeek = playerManager.isPlaying
+                if (wasPlayingBeforeSeek) playerManager.pause()
+                // Use keyframe-only seeking for instant frame display
+                playerManager.setFastSeekMode(true)
+                // Hide spinner during seekbar drag
+                binding.progressBar.visibility = View.GONE
                 handler.removeCallbacks(hideControlsRunnable)
             }
 
             override fun onStopTrackingTouch(sb: SeekBar?) {
+                // Restore precise seeking before final seek
+                playerManager.setFastSeekMode(false)
                 sb?.let {
                     val seekPosition = it.progress.toLong()
                     playerManager.seekTo(seekPosition)
                 }
+                // Resume playback if it was playing before the drag
+                if (wasPlayingBeforeSeek) playerManager.play()
                 isUserDraggingSeekbar = false
+                hideSeekPreview()
                 scheduleHideControls()
             }
         })
@@ -263,7 +283,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.btnAspectRatio.setOnClickListener { cycleResizeMode() }
 
         // Fit/Fill screen toggle
-        binding.btnFitScreen.setOnClickListener { cycleResizeMode() }
+        // (removed – btnAspectRatio now cycles through all modes)
     }
 
     // ═══════════════════════ Top Toolbar ══════════════════════════════════
@@ -367,33 +387,19 @@ class PlayerActivity : AppCompatActivity() {
         handler.postDelayed(hideIndicatorRunnable, 800L)
     }
 
-    // ═══════════════════════ Thumbnail Retriever ════════════════════════
-
-    private fun initThumbnailRetriever() {
-        releaseThumbnailRetriever()
-        try {
-            metadataRetriever = MediaMetadataRetriever().apply {
-                setDataSource(this@PlayerActivity, Uri.parse(videoPath))
-            }
-        } catch (_: Exception) {
-            metadataRetriever = null
-        }
-        lastThumbnailTimeMs = -1L
-    }
-
-    private fun releaseThumbnailRetriever() {
-        try {
-            metadataRetriever?.release()
-        } catch (_: Exception) { }
-        metadataRetriever = null
-    }
-
-    // ═══════════════════════ Seek Preview (smooth scrubbing) ══════════════
+    // ═══════════════════════ Seek Preview (real-time scrubbing) ════════════
 
     private fun showSeekPreview(deltaMs: Long) {
         if (!isSeeking) {
             isSeeking = true
             seekStartPosition = playerManager.currentPosition
+            // Pause during seek so only the static frame is shown (no playback)
+            wasPlayingBeforeSeek = playerManager.isPlaying
+            if (wasPlayingBeforeSeek) playerManager.pause()
+            // Use keyframe-only seeking for instant frame display
+            playerManager.setFastSeekMode(true)
+            // Hide spinner during seek gesture
+            binding.progressBar.visibility = View.GONE
         }
         val dur = playerManager.duration
         val targetPos = (seekStartPosition + deltaMs).coerceIn(0L, dur)
@@ -405,37 +411,42 @@ class PlayerActivity : AppCompatActivity() {
         val sign = if (deltaMs >= 0) "+" else "-"
         binding.tvSeekDelta.text = "$sign${TimeFormatter.format(abs(deltaMs))}"
 
-        // Extract frame thumbnail if interval has passed
-        if (abs(targetPos - lastThumbnailTimeMs) >= thumbnailIntervalMs || lastThumbnailTimeMs < 0) {
-            lastThumbnailTimeMs = targetPos
-            try {
-                val bitmap = metadataRetriever?.getFrameAtTime(
-                    targetPos * 1000, // microseconds
-                    MediaMetadataRetriever.OPTION_CLOSEST_SYNC
-                )
-                if (bitmap != null) {
-                    binding.ivSeekThumbnail.setImageBitmap(bitmap)
-                    binding.ivSeekThumbnail.visibility = View.VISIBLE
-                }
-            } catch (_: Exception) {
-                binding.ivSeekThumbnail.visibility = View.GONE
-            }
-        }
+        // Seek ExoPlayer so PlayerView renders the frame at this position (paused)
+        playerManager.seekTo(targetPos)
 
-        // Update seekbar & time labels visually without actually seeking
+        // Update seekbar & time labels
         binding.seekBar.progress = targetPos.toInt()
         binding.tvPosition.text = TimeFormatter.format(targetPos)
         updateRemainingTime(targetPos)
     }
 
-    private fun commitSeek(deltaMs: Long) {
+    /** Show seek preview for seekbar drag (absolute position, no delta). */
+    private fun showSeekbarPreview(positionMs: Long) {
         val dur = playerManager.duration
-        val targetPos = (seekStartPosition + deltaMs).coerceIn(0L, dur)
+        val targetPos = positionMs.coerceIn(0L, dur)
+
+        binding.seekPreview.visibility = View.VISIBLE
+        binding.tvSeekTarget.text = TimeFormatter.format(targetPos)
+        binding.tvSeekDelta.visibility = View.GONE
+
+        // Seek ExoPlayer in real-time so PlayerView shows the actual frame
         playerManager.seekTo(targetPos)
+    }
+
+    private fun commitSeek(deltaMs: Long) {
+        // Restore precise seeking before resuming playback
+        playerManager.setFastSeekMode(false)
+        // Player is already at the correct position from real-time seeking
+        // Resume playback if it was playing before the seek gesture
+        if (wasPlayingBeforeSeek) playerManager.play()
+        hideSeekPreview()
+    }
+
+    private fun hideSeekPreview() {
         isSeeking = false
         seekStartPosition = 0L
-        lastThumbnailTimeMs = -1L
-        binding.ivSeekThumbnail.visibility = View.GONE
+        wasPlayingBeforeSeek = false
+        binding.tvSeekDelta.visibility = View.VISIBLE
         binding.seekPreview.visibility = View.GONE
     }
 
@@ -469,7 +480,6 @@ class PlayerActivity : AppCompatActivity() {
         binding.tvTitle.text = videoTitle
         clearAbRepeat()
         updatePrevNextButtons()
-        initThumbnailRetriever()
 
         // Resume from saved position (0 if fully watched or never opened)
         if (videoId != -1L) {
@@ -711,12 +721,14 @@ class PlayerActivity : AppCompatActivity() {
         currentResizeIndex = (currentResizeIndex + 1) % resizeModes.size
         binding.playerView.resizeMode = resizeModes[currentResizeIndex]
 
-        val label = when (resizeModes[currentResizeIndex]) {
-            AspectRatioFrameLayout.RESIZE_MODE_FIT -> getString(R.string.resize_fit)
-            AspectRatioFrameLayout.RESIZE_MODE_FILL -> getString(R.string.resize_fill)
-            AspectRatioFrameLayout.RESIZE_MODE_ZOOM -> getString(R.string.resize_zoom)
-            else -> "Fit"
+        val (label, icon) = when (resizeModes[currentResizeIndex]) {
+            AspectRatioFrameLayout.RESIZE_MODE_FIT -> getString(R.string.resize_fit) to R.drawable.ic_aspect_fit
+            AspectRatioFrameLayout.RESIZE_MODE_FILL -> getString(R.string.resize_stretch) to R.drawable.ic_aspect_stretch
+            AspectRatioFrameLayout.RESIZE_MODE_ZOOM -> getString(R.string.resize_crop) to R.drawable.ic_aspect_crop
+            AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH -> getString(R.string.resize_100) to R.drawable.ic_aspect_100
+            else -> "Fit to Screen" to R.drawable.ic_aspect_fit
         }
+        binding.btnAspectRatio.setImageResource(icon)
         binding.tvInfo.text = label
         showInfoBriefly()
     }

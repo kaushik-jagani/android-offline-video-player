@@ -20,7 +20,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <!-- Video list -->
         <androidx.recyclerview.widget.RecyclerView
@@ -45,5 +46,17 @@
             tools:visibility="visible" />
 
     </FrameLayout>
+
+    <!-- Developer footer -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorSurface"
+        android:gravity="center"
+        android:paddingVertical="8dp"
+        android:text="@string/developer_credit"
+        android:textColor="#66FFFFFF"
+        android:textSize="11sp"
+        android:letterSpacing="0.04" />
 
 </LinearLayout>
