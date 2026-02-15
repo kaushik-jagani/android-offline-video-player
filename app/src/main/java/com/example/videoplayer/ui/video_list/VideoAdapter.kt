@@ -1,6 +1,7 @@
 package com.example.videoplayer.ui.video_list
 
 import android.content.Context
+import android.net.Uri
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -115,15 +116,29 @@ class VideoAdapter(
             container.addView(row)
         }
 
-        val file = File(video.path)
-        val exists = file.exists()
-        val extension = file.extension.takeIf { it.isNotBlank() } ?: "-"
+        val uri = runCatching { Uri.parse(video.path) }.getOrNull()
+        val isContentUri = uri?.scheme == "content"
+
+        val (exists, extension) = if (!isContentUri) {
+            val file = File(video.path)
+            val ex = file.exists()
+            val ext = file.extension.takeIf { it.isNotBlank() } ?: "-"
+            ex to ext
+        } else {
+            val ext = video.title.substringAfterLast('.', "-").takeIf { it.isNotBlank() } ?: "-"
+            true to ext
+        }
 
         val dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
         val dateAddedText = runCatching { dateFormat.format(Date(video.dateAdded * 1000L)) }.getOrNull() ?: "-"
-        val lastModifiedText = runCatching {
-            if (exists) dateFormat.format(Date(file.lastModified())) else "-"
-        }.getOrNull() ?: "-"
+        val lastModifiedText = if (!isContentUri) {
+            val file = File(video.path)
+            runCatching {
+                if (exists) dateFormat.format(Date(file.lastModified())) else "-"
+            }.getOrNull() ?: "-"
+        } else {
+            "-"
+        }
 
         addRow(context.getString(R.string.prop_title), video.title.ifBlank { "-" })
         addRow(context.getString(R.string.prop_path), video.path.ifBlank { "-" })

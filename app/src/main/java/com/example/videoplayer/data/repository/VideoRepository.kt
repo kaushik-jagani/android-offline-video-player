@@ -1,7 +1,9 @@
 package com.example.videoplayer.data.repository
 
 import android.content.Context
+import android.content.ContentUris
 import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
@@ -110,14 +112,21 @@ class VideoRepository(context: Context) {
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         }
 
-        val projection = arrayOf(
-            MediaStore.Video.Media._ID,
-            MediaStore.Video.Media.DISPLAY_NAME,
-            MediaStore.Video.Media.DATA,
-            MediaStore.Video.Media.DURATION,
-            MediaStore.Video.Media.SIZE,
-            MediaStore.Video.Media.DATE_ADDED
-        )
+        val useContentUris = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
+        val projection = buildList {
+            add(MediaStore.Video.Media._ID)
+            add(MediaStore.Video.Media.DISPLAY_NAME)
+            if (useContentUris) {
+                add(MediaStore.Video.Media.RELATIVE_PATH)
+            } else {
+                @Suppress("DEPRECATION")
+                add(MediaStore.Video.Media.DATA)
+            }
+            add(MediaStore.Video.Media.DURATION)
+            add(MediaStore.Video.Media.SIZE)
+            add(MediaStore.Video.Media.DATE_ADDED)
+        }.toTypedArray()
 
         val sortOrder = "${MediaStore.Video.Media.DISPLAY_NAME} ASC"
 
@@ -130,7 +139,13 @@ class VideoRepository(context: Context) {
         )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
             val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
-            val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+            val dataColumn = if (!useContentUris) {
+                @Suppress("DEPRECATION")
+                cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+            } else -1
+            val relativePathColumn = if (useContentUris) {
+                cursor.getColumnIndexOrThrow(MediaStore.Video.Media.RELATIVE_PATH)
+            } else -1
             val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION)
             val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
             val dateColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED)
@@ -138,26 +153,43 @@ class VideoRepository(context: Context) {
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idColumn)
                 val name = cursor.getString(nameColumn) ?: "Unknown"
-                val data = cursor.getString(dataColumn) ?: continue
+                val pathOrUri = if (useContentUris) {
+                    ContentUris.withAppendedId(collection, id).toString()
+                } else {
+                    cursor.getString(dataColumn) ?: continue
+                }
+
                 var duration = cursor.getLong(durationColumn)
                 val size = cursor.getLong(sizeColumn)
                 val dateAdded = cursor.getLong(dateColumn)
 
                 // Fallback: if MediaStore returns 0 duration, use MediaMetadataRetriever
                 if (duration <= 0L) {
-                    duration = retrieveDurationFallback(data)
+                    duration = retrieveDurationFallback(pathOrUri)
                 }
 
-                // Derive folder info from the absolute path
-                val parentFile = File(data).parentFile
-                val folderName = parentFile?.name ?: "Internal Storage"
-                val folderPath = parentFile?.absolutePath ?: "/"
+                val (folderName, folderPath) = if (useContentUris) {
+                    val relativePath = cursor.getString(relativePathColumn) ?: ""
+                    val cleaned = relativePath.trim().trim('/')
+                    if (cleaned.isBlank()) {
+                        "Internal Storage" to "/"
+                    } else {
+                        val namePart = cleaned.substringAfterLast('/', cleaned)
+                        namePart to cleaned
+                    }
+                } else {
+                    // Derive folder info from the absolute path
+                    val parentFile = File(pathOrUri).parentFile
+                    val fn = parentFile?.name ?: "Internal Storage"
+                    val fp = parentFile?.absolutePath ?: "/"
+                    fn to fp
+                }
 
                 videos.add(
                     VideoItem(
                         id = id,
                         title = name,
-                        path = data,
+                        path = pathOrUri,
                         duration = duration,
                         size = size,
                         folderName = folderName,
@@ -175,16 +207,21 @@ class VideoRepository(context: Context) {
      * Uses [MediaMetadataRetriever] to extract duration for videos where
      * MediaStore returned 0. This handles formats that MediaStore can't parse.
      */
-    private fun retrieveDurationFallback(path: String): Long {
+    private fun retrieveDurationFallback(pathOrUri: String): Long {
         val retriever = MediaMetadataRetriever()
         return try {
-            retriever.setDataSource(path)
+            val uri = Uri.parse(pathOrUri)
+            if (uri.scheme == "content") {
+                retriever.setDataSource(appContext, uri)
+            } else {
+                retriever.setDataSource(pathOrUri)
+            }
             val durationStr = retriever.extractMetadata(
                 MediaMetadataRetriever.METADATA_KEY_DURATION
             )
             durationStr?.toLongOrNull() ?: 0L
         } catch (e: Exception) {
-            Log.e(TAG, "MediaMetadataRetriever failed for: $path", e)
+            Log.e(TAG, "MediaMetadataRetriever failed for: $pathOrUri", e)
             0L
         } finally {
             try { retriever.release() } catch (_: Exception) { }

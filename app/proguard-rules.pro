@@ -20,3 +20,7 @@
 
 # Keep ViewBinding classes
 -keep class com.example.videoplayer.databinding.** { *; }
+
+# Keep LibVLC (reflection/native bindings)
+-keep class org.videolan.libvlc.** { *; }
+-dontwarn org.videolan.libvlc.**

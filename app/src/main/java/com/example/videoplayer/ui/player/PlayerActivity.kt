@@ -2,7 +2,9 @@ package com.example.videoplayer.ui.player
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.Manifest
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.util.Log
 import android.content.ContentValues
 import android.graphics.Bitmap
@@ -23,9 +25,11 @@ import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -70,6 +74,15 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var playerManager: ExoPlayerManager
     private var vlcManager: VlcPlayerManager? = null
     private lateinit var gestureHandler: PlayerGestureHandler
+
+    private val requestWriteStoragePermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                takeScreenshot()
+            } else {
+                Toast.makeText(this, R.string.screenshot_permission_denied, Toast.LENGTH_SHORT).show()
+            }
+        }
 
     private var isUsingVlcFallback = false
     private var hasSwitchedToVlcFallback = false
@@ -630,7 +643,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.btnAudioTrack.setOnClickListener { showAudioTrackPicker() }
 
         // Screenshot
-        binding.btnScreenshot.setOnClickListener { takeScreenshot() }
+        binding.btnScreenshot.setOnClickListener { takeScreenshotWithPermission() }
 
         // Screen Rotation
         binding.btnRotation.setOnClickListener { cycleOrientation() }
@@ -1103,6 +1116,18 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     // ═══════════════════════ Feature: Screenshot ═════════════════════════
+
+    private fun takeScreenshotWithPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, R.string.screenshot_permission_required, Toast.LENGTH_SHORT).show()
+                requestWriteStoragePermission.launch(permission)
+                return
+            }
+        }
+        takeScreenshot()
+    }
 
     private fun takeScreenshot() {
         try {
