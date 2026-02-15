@@ -20,3 +20,8 @@ local.properties
 *.bak
 .qodo/
 .vscode/
+
+# Local tooling / scratch folders (not part of the app)
+.gradle-local/
+.tmp-media3/
+.tmp-media3-extractor/

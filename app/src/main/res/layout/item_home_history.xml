@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/grid_2"
+    android:paddingBottom="@dimen/grid_1">
+
+    <TextView
+        android:id="@+id/tvHistoryTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/grid_1"
+        android:paddingEnd="@dimen/grid_1"
+        android:textColor="@color/colorOnSurface"
+        android:textSize="@dimen/text_title"
+        android:textStyle="bold"
+        tools:text="Local History" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/grid_1"
+        android:paddingEnd="@dimen/grid_1"
+        android:paddingTop="@dimen/grid_1"
+        android:overScrollMode="never"
+        tools:listitem="@layout/item_history_video" />
+
+</LinearLayout>

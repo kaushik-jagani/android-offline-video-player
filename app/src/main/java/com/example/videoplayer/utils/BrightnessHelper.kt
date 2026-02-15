@@ -1,5 +1,6 @@
 package com.example.videoplayer.utils
 
+import android.provider.Settings
 import android.view.Window
 
 /**
@@ -13,8 +14,17 @@ object BrightnessHelper {
     fun getScreenBrightness(window: Window): Float {
         val lp = window.attributes
         return if (lp.screenBrightness < 0) {
-            // System default – read from system settings instead
-            0.5f
+            // System default – read actual system brightness (0-255 → 0f-1f)
+            try {
+                val sysBrightness = Settings.System.getInt(
+                    window.context.contentResolver,
+                    Settings.System.SCREEN_BRIGHTNESS,
+                    128
+                )
+                sysBrightness / 255f
+            } catch (_: Exception) {
+                0.5f
+            }
         } else {
             lp.screenBrightness
         }

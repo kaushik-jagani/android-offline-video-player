@@ -15,6 +15,7 @@ import androidx.room.PrimaryKey
  * @property folderPath Absolute path of the parent folder.
  * @property dateAdded  Epoch seconds when the file was added.
  * @property lastPosition Last playback position in ms (for resume).
+ * @property lastPlayedAt Epoch millis of the last playback update.
  */
 @Entity(tableName = "videos")
 data class VideoItem(
@@ -27,5 +28,6 @@ data class VideoItem(
     val folderName: String,
     val folderPath: String,
     val dateAdded: Long,
-    val lastPosition: Long = 0L
+    val lastPosition: Long = 0L,
+    val lastPlayedAt: Long = 0L
 )

@@ -12,8 +12,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ConcatAdapter
 import com.example.videoplayer.R
 import com.example.videoplayer.databinding.ActivityMainBinding
+import com.example.videoplayer.ui.player.PlayerActivity
 import com.example.videoplayer.ui.video_list.VideoListActivity
 import com.example.videoplayer.utils.Constants
 import com.example.videoplayer.utils.PermissionHelper
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
     private lateinit var folderAdapter: FolderAdapter
+    private lateinit var historyHeaderAdapter: HomeHistoryHeaderAdapter
 
     // Modern permission launcher
     private val permissionLauncher = registerForActivityResult(
@@ -85,6 +88,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
+        historyHeaderAdapter = HomeHistoryHeaderAdapter { video ->
+            val intent = Intent(this, PlayerActivity::class.java).apply {
+                putExtra(Constants.EXTRA_VIDEO_ID, video.id)
+                putExtra(Constants.EXTRA_VIDEO_PATH, video.path)
+                putExtra(Constants.EXTRA_VIDEO_TITLE, video.title)
+                putExtra(Constants.EXTRA_START_POSITION, video.lastPosition)
+                // Single-item playlist to keep PlayerActivity logic consistent.
+                putExtra(Constants.EXTRA_PLAYLIST_PATHS, arrayListOf(video.path))
+                putExtra(Constants.EXTRA_PLAYLIST_TITLES, arrayListOf(video.title))
+                putExtra(Constants.EXTRA_PLAYLIST_IDS, longArrayOf(video.id))
+                putExtra(Constants.EXTRA_PLAYLIST_INDEX, 0)
+            }
+            startActivity(intent)
+        }
+
         folderAdapter = FolderAdapter { folder ->
             val intent = Intent(this, VideoListActivity::class.java).apply {
                 putExtra(Constants.EXTRA_FOLDER_PATH, folder.path)
@@ -94,8 +112,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.rvFolders.apply {
-            layoutManager = GridLayoutManager(this@MainActivity, 2)
-            adapter = folderAdapter
+            val concatAdapter = ConcatAdapter(historyHeaderAdapter, folderAdapter)
+            val glm = GridLayoutManager(this@MainActivity, 2)
+            glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    // Header should span full width.
+                    return if (position == 0 && historyHeaderAdapter.itemCount == 1) 2 else 1
+                }
+            }
+
+            layoutManager = glm
+            adapter = concatAdapter
             setHasFixedSize(true)
         }
     }
@@ -114,6 +141,11 @@ class MainActivity : AppCompatActivity() {
                 launch {
                     viewModel.folders.collectLatest { folders ->
                         folderAdapter.submitList(folders)
+                    }
+                }
+                launch {
+                    viewModel.history.collectLatest { history ->
+                        historyHeaderAdapter.submit(history)
                     }
                 }
                 launch {

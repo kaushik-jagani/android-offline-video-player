@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.videoplayer.data.model.VideoItem
 import kotlinx.coroutines.flow.Flow
 
@@ -44,19 +45,33 @@ interface VideoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(videos: List<VideoItem>)
 
-    /** Update last playback position for resume functionality. */
-    @Query("UPDATE videos SET lastPosition = :position WHERE id = :videoId")
-    suspend fun updateLastPosition(videoId: Long, position: Long)
+    /** Update last playback position (resume) and record a last-played timestamp. */
+    @Query("UPDATE videos SET lastPosition = :position, lastPlayedAt = :playedAt WHERE id = :videoId")
+    suspend fun updatePlaybackState(videoId: Long, position: Long, playedAt: Long)
 
-    /** Get all video IDs and their saved positions (used to preserve positions across rescan). */
-    @Query("SELECT id, lastPosition FROM videos")
-    suspend fun getAllVideoPositions(): List<VideoPosition>
+    /** Get all video IDs and their saved playback state (used to preserve state across rescan). */
+    @Query("SELECT id, lastPosition, lastPlayedAt FROM videos")
+    suspend fun getAllVideoPositions(): List<VideoPlaybackState>
+
+    /** Recently watched videos for the main-screen Local History row. */
+    @Query("SELECT * FROM videos WHERE lastPlayedAt > 0 ORDER BY lastPlayedAt DESC LIMIT :limit")
+    fun getRecentHistory(limit: Int): Flow<List<VideoItem>>
 
     // ── Deletes ──────────────────────────────────────────────────────────
 
     /** Remove all videos (used before a full re-scan). */
     @Query("DELETE FROM videos")
     suspend fun deleteAll()
+
+    /**
+     * Atomically replace all videos: delete existing then insert new list.
+     * Wrapped in @Transaction so the UI never sees an empty intermediate state.
+     */
+    @Transaction
+    suspend fun replaceAll(videos: List<VideoItem>) {
+        deleteAll()
+        insertAll(videos)
+    }
 }
 
 /**
@@ -75,4 +90,11 @@ data class FolderInfo(
 data class VideoPosition(
     val id: Long,
     val lastPosition: Long
+)
+
+/** Lightweight projection for preserving playback state across rescans. */
+data class VideoPlaybackState(
+    val id: Long,
+    val lastPosition: Long,
+    val lastPlayedAt: Long
 )

@@ -61,8 +61,12 @@ class VideoRepository(context: Context) {
 
     /** Save the last playback position so the user can resume later. */
     suspend fun savePlaybackPosition(videoId: Long, positionMs: Long) {
-        dao.updateLastPosition(videoId, positionMs)
+        dao.updatePlaybackState(videoId, positionMs, System.currentTimeMillis())
     }
+
+    /** Observe last watched videos for the main screen (Local History row). */
+    fun observeRecentHistory(limit: Int = 5): Flow<List<VideoItem>> =
+        dao.getRecentHistory(limit)
 
     // ── MediaStore Scanner ───────────────────────────────────────────────
 
@@ -75,15 +79,18 @@ class VideoRepository(context: Context) {
         try {
             val videos = queryMediaStore()
             // Preserve existing saved positions before replacing
-            val existingPositions = dao.getAllVideoPositions()
-            val positionMap = existingPositions.associate { it.id to it.lastPosition }
+            val existingState = dao.getAllVideoPositions()
+            val stateMap = existingState.associateBy { it.id }
             // Apply saved positions to freshly scanned items
             val merged = videos.map { v ->
-                val saved = positionMap[v.id]
-                if (saved != null && saved > 0L) v.copy(lastPosition = saved) else v
+                val saved = stateMap[v.id]
+                if (saved != null) {
+                    v.copy(lastPosition = saved.lastPosition, lastPlayedAt = saved.lastPlayedAt)
+                } else {
+                    v
+                }
             }
-            dao.deleteAll()
-            dao.insertAll(merged)
+            dao.replaceAll(merged)
             true
         } catch (e: Exception) {
             Log.e(TAG, "Failed to scan device videos", e)
@@ -169,17 +176,18 @@ class VideoRepository(context: Context) {
      * MediaStore returned 0. This handles formats that MediaStore can't parse.
      */
     private fun retrieveDurationFallback(path: String): Long {
+        val retriever = MediaMetadataRetriever()
         return try {
-            val retriever = MediaMetadataRetriever()
             retriever.setDataSource(path)
             val durationStr = retriever.extractMetadata(
                 MediaMetadataRetriever.METADATA_KEY_DURATION
             )
-            retriever.release()
             durationStr?.toLongOrNull() ?: 0L
         } catch (e: Exception) {
             Log.e(TAG, "MediaMetadataRetriever failed for: $path", e)
             0L
+        } finally {
+            try { retriever.release() } catch (_: Exception) { }
         }
     }
 }

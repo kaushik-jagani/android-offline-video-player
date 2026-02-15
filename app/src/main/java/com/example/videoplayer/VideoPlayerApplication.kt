@@ -9,14 +9,13 @@ import com.example.videoplayer.data.database.VideoDatabase
  */
 class VideoPlayerApplication : Application() {
 
-    /** Eager database initialisation on app start. */
-    val database: VideoDatabase by lazy {
-        VideoDatabase.getInstance(this)
-    }
+    /** Database singleton — initialized eagerly on app start. */
+    lateinit var database: VideoDatabase
+        private set
 
     override fun onCreate() {
         super.onCreate()
         // Pre-warm the database singleton
-        database
+        database = VideoDatabase.getInstance(this)
     }
 }

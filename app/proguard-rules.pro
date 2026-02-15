@@ -1,7 +1,10 @@
 # ProGuard rules for Offline Video Player
 
-# Keep ExoPlayer
--keep class androidx.media3.** { *; }
+# Keep ExoPlayer public APIs (allow R8 to optimize internals)
+-keep class androidx.media3.common.** { *; }
+-keep class androidx.media3.exoplayer.ExoPlayer { *; }
+-keep class androidx.media3.exoplayer.ExoPlayer$Builder { *; }
+-keep class androidx.media3.ui.PlayerView { *; }
 -dontwarn androidx.media3.**
 
 # Keep Room entities

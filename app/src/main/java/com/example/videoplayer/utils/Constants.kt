@@ -19,10 +19,6 @@ object Constants {
     const val EXTRA_PLAYLIST_IDS = "extra_playlist_ids"
     const val EXTRA_PLAYLIST_INDEX = "extra_playlist_index"
 
-    // ── Permission Request ───────────────────────────────────────────────
-    const val REQUEST_CODE_PERMISSION = 1001
-
     // ── Player defaults ──────────────────────────────────────────────────
-    const val SEEK_INCREMENT_MS = 10_000L
     const val CONTROLS_TIMEOUT_MS = 4_000L
 }

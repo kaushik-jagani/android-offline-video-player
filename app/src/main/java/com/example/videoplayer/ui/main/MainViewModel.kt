@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.videoplayer.data.model.VideoFolder
+import com.example.videoplayer.data.model.VideoItem
 import com.example.videoplayer.data.repository.VideoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _folders = MutableStateFlow<List<VideoFolder>>(emptyList())
     val folders: StateFlow<List<VideoFolder>> = _folders.asStateFlow()
 
+    private val _history = MutableStateFlow<List<VideoItem>>(emptyList())
+    val history: StateFlow<List<VideoItem>> = _history.asStateFlow()
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -34,6 +38,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         observeFolders()
+        observeHistory()
     }
 
     // ── Actions ──────────────────────────────────────────────────────────
@@ -58,6 +63,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             repository.observeFolders().collectLatest { list ->
                 _folders.value = list
                 _isEmpty.value = list.isEmpty()
+            }
+        }
+    }
+
+    private fun observeHistory() {
+        viewModelScope.launch {
+            repository.observeRecentHistory(limit = 5).collectLatest { list ->
+                _history.value = list
             }
         }
     }

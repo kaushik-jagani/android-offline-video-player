@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.videoplayer"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.videoplayer"
@@ -72,10 +72,13 @@ dependencies {
     ksp("androidx.room:room-compiler:2.6.1")
 
     // ExoPlayer (AndroidX Media3)
-    implementation("androidx.media3:media3-exoplayer:1.2.1")
-    implementation("androidx.media3:media3-ui:1.2.1")
-    implementation("androidx.media3:media3-common:1.2.1")
-    implementation("androidx.media3:media3-session:1.2.1")
+    implementation("androidx.media3:media3-exoplayer:1.9.2")
+    implementation("androidx.media3:media3-ui:1.9.2")
+    implementation("androidx.media3:media3-common:1.9.2")
+    implementation("androidx.media3:media3-session:1.9.2")
+
+    // LibVLC (fallback player for edge-case MKVs where ExoPlayer seek maps fail)
+    implementation("org.videolan.android:libvlc-all:3.6.5")
 
     // Glide – Image/Thumbnail loading
     implementation("com.github.bumptech.glide:glide:4.16.0")

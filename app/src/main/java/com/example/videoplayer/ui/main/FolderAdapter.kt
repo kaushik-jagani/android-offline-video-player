@@ -28,6 +28,12 @@ class FolderAdapter(
         holder.bind(getItem(position))
     }
 
+    override fun onViewRecycled(holder: FolderViewHolder) {
+        super.onViewRecycled(holder)
+        val iv: android.widget.ImageView = holder.itemView.findViewById(R.id.ivThumbnail) ?: return
+        Glide.with(iv).clear(iv)
+    }
+
     inner class FolderViewHolder(
         private val binding: ItemFolderBinding
     ) : RecyclerView.ViewHolder(binding.root) {

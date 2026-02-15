@@ -16,11 +16,29 @@
         app:resize_mode="fit"
         app:use_controller="false" />
 
+    <!-- LibVLC surface (hidden; used only as a fallback) -->
+    <org.videolan.libvlc.util.VLCVideoLayout
+        android:id="@+id/vlcVideoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <!-- Transparent gesture overlay -->
     <View
         android:id="@+id/gestureOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <!-- Night mode warm overlay (hidden by default) -->
+    <View
+        android:id="@+id/nightOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#44FF8F00"
+        android:clickable="false"
+        android:focusable="false"
+        android:elevation="100dp"
+        android:visibility="gone" />
 
     <!-- Buffering spinner -->
     <ProgressBar
@@ -68,7 +86,7 @@
                 android:orientation="vertical"
                 android:paddingTop="8dp">
 
-                <!-- Row 1: Back + Title + HW toggle + 3-dot menu -->
+                <!-- Row 1: Back + Title -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -99,20 +117,6 @@
                         android:textSize="15sp"
                         android:textStyle="bold"
                         tools:text="Nishaanchi-2.2025.1080p.HEVC.Hindi.WEB-DL" />
-
-                    <!-- HW/SW Decoder Toggle -->
-                    <TextView
-                        android:id="@+id/btnHwToggle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:background="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:minWidth="44dp"
-                        android:paddingHorizontal="10dp"
-                        android:text="@string/hw_label"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -251,7 +255,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:max="100"
+                    android:max="1000"
                     android:paddingHorizontal="4dp"
                     android:progressBackgroundTint="@color/seekBarTrack"
                     android:progressTint="@color/seekBarProgress"
@@ -500,5 +504,43 @@
         android:visibility="gone"
         app:tint="@color/white"
         tools:visibility="visible" />
+
+    <!-- ─── Loading Overlay (shown until first video frame renders) ──── -->
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="32dp">
+
+            <ProgressBar
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:indeterminateTint="@color/seekBarThumb" />
+
+            <TextView
+                android:id="@+id/tvLoadingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:maxLines="2"
+                android:textColor="@color/colorOnSurfaceVariant"
+                android:textSize="14sp"
+                tools:text="My Video File.mp4" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </FrameLayout>

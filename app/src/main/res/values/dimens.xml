@@ -14,6 +14,9 @@
     <dimen name="video_thumbnail_width">140dp</dimen>
     <dimen name="video_thumbnail_height">90dp</dimen>
 
+    <!-- Main: Local History (horizontal) -->
+    <dimen name="history_item_min_width">140dp</dimen>
+
     <!-- Player -->
     <dimen name="player_icon_size">42dp</dimen>
     <dimen name="player_seek_icon_size">36dp</dimen>

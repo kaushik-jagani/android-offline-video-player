@@ -23,12 +23,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     /**
-     * Look up the saved playback position for a video and return it via callback.
+     * Look up the saved playback position for a video.
+     * Returns the saved position or 0L if not found.
      */
-    fun getLastPosition(videoId: Long, callback: (Long) -> Unit) {
-        viewModelScope.launch {
-            val video = repository.getVideoById(videoId)
-            callback(video?.lastPosition ?: 0L)
-        }
+    suspend fun getLastPosition(videoId: Long): Long {
+        val video = repository.getVideoById(videoId)
+        return video?.lastPosition ?: 0L
     }
 }
