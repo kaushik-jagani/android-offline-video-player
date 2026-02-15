@@ -111,9 +111,8 @@
     <string name="cant_open_link">Can’t open link on this device.</string>
 
     <!-- Set this before publishing (Play Console requires a valid privacy policy URL in most cases). -->
-    <string name="privacy_policy_url">https://kaushik-jagani.github.io/android-offline-video-player/privacy-policy</string>
+    <string name="privacy_policy_url">https://kaushik-jagani.github.io/Privacy-Page/</string>
     <string name="privacy_policy_missing_hint">Privacy policy URL is not set. Update the string \"privacy_policy_url\" before publishing.</string>
     <string name="privacy_policy_missing_snackbar">Privacy policy URL is not set in the app yet.</string>
-
     <string name="open_source_licenses_text">This app uses open-source libraries:\n\n• AndroidX Media3 (ExoPlayer)\n• LibVLC\n• Room\n• Material Components\n• Glide\n\nRespective licenses apply. If you modified any LGPL components (e.g., LibVLC), ensure you comply with their requirements.</string>
 </resources>
