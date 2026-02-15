@@ -111,7 +111,7 @@
     <string name="cant_open_link">Can’t open link on this device.</string>
 
     <!-- Set this before publishing (Play Console requires a valid privacy policy URL in most cases). -->
-    <string name="privacy_policy_url"></string>
+    <string name="privacy_policy_url">https://kaushik-jagani.github.io/android-offline-video-player/privacy-policy</string>
     <string name="privacy_policy_missing_hint">Privacy policy URL is not set. Update the string \"privacy_policy_url\" before publishing.</string>
     <string name="privacy_policy_missing_snackbar">Privacy policy URL is not set in the app yet.</string>
 
