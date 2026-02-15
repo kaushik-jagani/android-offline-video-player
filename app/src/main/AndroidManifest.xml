@@ -22,7 +22,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OfflineVideoPlayer"
-        tools:targetApi="34">
+        tools:targetApi="35">
 
         <!-- Main Activity – Folder / Video List browsing -->
         <activity
